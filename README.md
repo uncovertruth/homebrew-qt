@@ -1,6 +1,6 @@
 # homebrew-qt
 
-`brew install qt --with-qtwebkit`
+    brew install qt --with-qtwebkit
 
 ## Why?
 
@@ -13,14 +13,14 @@ Maintainer's decision should be respected indeed, however we need to installatio
 ## What's this?
 
 Just a copy of `Formula/qt.rb` in the `homebrew-core` repository,
-at revision `824af16c2d75a767dabacac4159cc57c14271ac2`.
+at revision `48421a0c709ea9f204cd41d0e28fcfc5854f0d49`
 
 Not modified.
 
 ## How it use?
 
     brew uninstall qt  # if you have old installation
-    brew install uncovertruth/qt/qt
+    brew install uncovertruth/qt/qt --with-qtwebkit
 
 ## Alternatives
 
