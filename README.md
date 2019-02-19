@@ -1,6 +1,6 @@
 # homebrew-qt
 
-    brew install qt --with-qtwebkit
+Tap and Formula to install Qt5 with QtWebKit.
 
 ## Why?
 
@@ -12,25 +12,16 @@ Maintainer's decision should be respected indeed, however we need to installatio
 
 ## What's this?
 
-Just a copy of `Formula/qt.rb` in the `homebrew-core` repository,
-at revision `48421a0c709ea9f204cd41d0e28fcfc5854f0d49`
-
-Not modified.
+Tap includes formulae which installs `QtWebKit` and `QtWebKitWidgets` modules.
 
 ## How it use?
 
-    brew uninstall qt  # if you have old installation
-    brew install uncovertruth/qt/qt --with-qtwebkit
+    brew tap uncovertruth/qt
+    brew install qt5-webkit  # `qt` will installed automatically, because formula depends on it.
 
-## Alternatives
+## Caution
 
-This tap is not requisite to install Qt5 with webkit via Homebrew, but a shorthand.
-You can also install it along with a few steps as below:
-
-    rm -f /path/to/Library/Caches/Homebrew/qt*
-    cd /path/to/Homebrew/Library/Taps/homebrew/homebrew-core
-    git checkout 48421a0c709ea9f204cd41d0e28fcfc5854f0d49 Formula/qt.rb
-    HOMEBREW_NO_AUTO_UPDATE=1 brew install qt --with-qtwebkit
+    `uncovertruth/qt/qt` is deprecated. NEVER USE THIS FORMULA ANY MORE.
 
 ## About
 
