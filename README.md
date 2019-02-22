@@ -19,10 +19,6 @@ Tap includes formulae which installs `QtWebKit` and `QtWebKitWidgets` modules.
     brew tap uncovertruth/qt
     brew install qt5-webkit  # `qt` will installed automatically, because formula depends on it.
 
-## Caution
-
-    `uncovertruth/qt/qt` is deprecated. NEVER USE THIS FORMULA ANY MORE.
-
 ## About
 
 This tap is currently maintained by [uncovertruth](https://uncovertruth.co.jp/en/)
