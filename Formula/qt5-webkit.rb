@@ -1,16 +1,11 @@
 class Qt5Webkit < Formula
-  # Notes:
-  # 1. We copy this formumae from https://github.com/markwu/homebrew-personal/blob/master/Formula/qt5-webkit.rb,
-  #    and remove unneccesary libraries dependency.
   desc "Classes for a WebKit2 based implementation and a new QML API"
   homepage "https://www.qt.io/developers"
-  url "https://github.com/qt/qtwebkit.git",
-    :branch => "5.212",
-    :commit => "72cfbd7664f21fcc0e62b869a6b01bf73eb5e7da"
-  version "5.212"
+  url "https://github.com/qt/qtwebkit/archive/72cfbd7664f21fcc0e62b869a6b01bf73eb5e7da.tar.gz"
+  sha256 "2e393e7429387437cbfef56ec839329663e9b136ea68997d1e1cdd2f4d9d3ae0"
+  version "5.12.1"
 
-  # if it is changed this should be applied in CMAKE_INSTALL_PREFIX (see patch)
-  # in the same way for "version"
+  revision 1
 
   # from the developer: "https://github.com/annulen/webkit.git"
   head "https://github.com/qt/qtwebkit.git"
@@ -22,7 +17,11 @@ class Qt5Webkit < Formula
   keg_only "because Qt5 is keg-only"
 
   depends_on "cmake" => :build
+  depends_on "ninja" => [:build, :recommended]
+  depends_on "pkg-config" => :build
+
   depends_on :xcode => :build
+
   depends_on "libjpeg-turbo"
   depends_on "libpng"
   depends_on "openssl"
@@ -30,15 +29,32 @@ class Qt5Webkit < Formula
   depends_on "webp"
   depends_on "zlib"
 
-  def install
-    # on Mavericks we want to target libc++, this requires a macx-clang flag
-    spec = (ENV.compiler == :clang && MacOS.version >= :mavericks) ? "macx-clang" : "macx-g++"
-    args = %W[-config release -spec #{spec}]
+  def cmake_args
+    args = %W[
+      -DCMAKE_INSTALL_PREFIX=#{prefix}
+      -DCMAKE_BUILD_TYPE=Release
+      -DCMAKE_FIND_FRAMEWORK=LAST
+      -DCMAKE_VERBOSE_MAKEFILE=ON
+      -Wno-dev
+    ]
+    args
+  end
 
+  def install
+    args = cmake_args
+    args << "-DPORT=Qt"
+    args << "-DENABLE_TOOLS=OFF"
+    args << "-DCMAKE_MACOSX_RPATH=OFF"
+    args << "-DEGPF_SET_RPATH=OFF"
+    args << "-DCMAKE_SKIP_RPATH=ON"
+    args << "-DCMAKE_SKIP_INSTALL_RPATH=ON"
+
+    # Fuck up rpath
+    # inreplace "Source/cmake/OptionQt.cmake", "RPATH\ ON", "RPATH\ OFF"
     mkdir "build" do
-      system "#{Formula["qt"].opt_bin}/qmake", "../WebKit.pro", *args
-      system "make"
-      system "make", "install"
+      system "cmake", "-G", build.with?("ninja") ? "Ninja" : "Unix Makefile", *args, ".."
+      system "cmake", "--build", ".", "--target", "all", "--", "-j", Hardware::CPU.cores
+      system "cmake", "--build", ".", "--target", "install", "--", "-j", Hardware::CPU.cores
     end
 
     # rename the .so files
@@ -235,15 +251,3 @@ __END__
  EXTERN_C size_t xpc_array_get_count(xpc_object_t);
  EXTERN_C const char* xpc_array_get_string(xpc_object_t, size_t index);
  EXTERN_C void xpc_array_set_string(xpc_object_t, size_t index, const char* string);
-
---- a/Tools/qmake/projects/run_cmake.pro 2017-06-17 13:46:54.000000000 +0300
-+++ b/Tools/qmake/projects/run_cmake.pro 2018-09-08 23:41:06.397523110 +0300
-@@ -22,6 +22,7 @@
-         PORT=Qt \
-         CMAKE_BUILD_TYPE=$$configuration \
-         CMAKE_TOOLCHAIN_FILE=$$toolchain_file \
-+        CMAKE_INSTALL_PREFIX=/usr/local/Cellar/qt5-webkit/5.212
-         USE_LIBHYPHEN=OFF
-
-     !isEmpty(_QMAKE_SUPER_CACHE_) {
-
