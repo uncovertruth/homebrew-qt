@@ -1,5 +1,7 @@
 # homebrew-qt
 
+**This repository is currently archived that means it's not maintained anymore.**
+
 Tap and Formula to install Qt5 with QtWebKit.
 
 ## Why?
